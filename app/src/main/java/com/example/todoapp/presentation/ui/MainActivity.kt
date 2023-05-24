@@ -1,10 +1,12 @@
 package com.example.todoapp.presentation.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.room.Room
 import com.example.todoapp.R
 import com.example.todoapp.data.TaskRepositoryImpl
@@ -18,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,17 +33,42 @@ class MainActivity : AppCompatActivity() {
         val removeTask = RemoveTask(taskRepository)
         val saveTask = SaveTask(taskRepository)
         CoroutineScope(Dispatchers.IO).launch {
-            saveTask.execute(Task(1, "Атжуманя", "2023-05-24"))
-
+            val listDataFromDb = getAllTasks.execute()
+            runOnUiThread {
+                initRecycler(listDataFromDb)
+            }
         }
 
     }
 
-    fun initRecycler() {
+    fun initRecycler(list: List<Task>) {
+        var mIth = ItemTouchHelper(
+            object : ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.LEFT
+            ) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: ViewHolder, target: ViewHolder
+                ): Boolean {
+                    val fromPos = viewHolder.adapterPosition
+                    val toPos = target.adapterPosition
+                    // move item in `fromPos` to `toPos` in adapter.
+                    return true // true if moved, false otherwise
+                }
+
+                override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
+                    val toast = Toast.makeText(applicationContext,"FUCK NIGGERS",Toast.LENGTH_SHORT)
+                    toast.show()
+                }
+            })
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         val adapter = RecyclerAdapter()
-        adapter.bindData(listOf(Task(1, "1", "2", false), Task(2, "1", "2", false)))
+        adapter.bindData(list)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        mIth.attachToRecyclerView(recyclerView)
     }
+
+
 }

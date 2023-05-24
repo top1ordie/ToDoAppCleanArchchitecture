@@ -16,8 +16,8 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.TaskViewHolder>() {
         private val dateView: TextView
 
         init {
-            nameView = view.findViewById(R.id.task_name)
-            dateView = view.findViewById(R.id.date_view)
+            nameView = view.findViewById(R.id.name_task)
+            dateView = view.findViewById(R.id.date_task)
         }
 
         fun onBind(task: Task) {
