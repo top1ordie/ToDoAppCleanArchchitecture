@@ -1,4 +1,7 @@
 package com.example.todoapp.presentation.ui
 
-class ModelView {
+import androidx.lifecycle.ViewModel
+
+class ModelView: ViewModel() {
+
 }

@@ -3,9 +3,9 @@ package com.example.todoapp.domain.repository
 import com.example.todoapp.domain.model.Task
 
 interface TaskRepository {
-    fun getAllTasks() : List<Task>
+    suspend fun getAllTasks(): List<Task>
 
-    fun removeTask()
+    suspend fun removeTask(task: Task)
 
-    fun saveTask()
+    suspend fun saveTask(task: Task)
 }

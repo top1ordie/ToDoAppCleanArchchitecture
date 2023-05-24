@@ -11,6 +11,6 @@ import com.example.todoapp.data.storage.database.room.entities.TaskRoom
 )
 abstract class AppDatabase : RoomDatabase(){
 
-    abstract fun getTaskDao() : TaskDao
+    abstract val dao: TaskDao
 
 }

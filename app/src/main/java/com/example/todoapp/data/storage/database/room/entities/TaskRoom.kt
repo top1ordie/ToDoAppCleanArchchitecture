@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "Task")
 data class TaskRoom(
-    @PrimaryKey val id: Int,
-    @ColumnInfo(name = "task_name") val name: String,
-    @ColumnInfo(name = "date_task") val date: String
+    @PrimaryKey val id: Long?,
+     val name: String,
+     val date: String,
+     val isCompleted: Boolean
 )
