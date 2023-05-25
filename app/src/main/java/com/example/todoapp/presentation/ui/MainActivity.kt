@@ -3,6 +3,7 @@ package com.example.todoapp.presentation.ui
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,27 +17,22 @@ import com.example.todoapp.domain.GetAllTasks
 import com.example.todoapp.domain.RemoveTask
 import com.example.todoapp.domain.SaveTask
 import com.example.todoapp.domain.model.Task
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val db =
-            Room.databaseBuilder(applicationContext, AppDatabase::class.java, "task.db").build().dao
-        val taskStorage = TaskStorageDataBaseImp(db)
-        val taskRepository = TaskRepositoryImpl(taskStorage)
-        val getAllTasks = GetAllTasks(taskRepository)
-        val removeTask = RemoveTask(taskRepository)
-        val saveTask = SaveTask(taskRepository)
-        CoroutineScope(Dispatchers.IO).launch {
-            val listDataFromDb = getAllTasks.execute()
-            runOnUiThread {
-                initRecycler(listDataFromDb)
-            }
+        viewModel = ViewModelProvider(this,MainViewModelFactory(applicationContext)).get(MainViewModel::class.java)
+        val addButton = findViewById<FloatingActionButton>(R.id.add_button)
+        addButton.setOnClickListener {
+            val dialog = CreateTaskDialog()
+            dialog.show(supportFragmentManager,"Dialog")
         }
 
     }
@@ -58,7 +54,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
-                    val toast = Toast.makeText(applicationContext,"FUCK NIGGERS",Toast.LENGTH_SHORT)
+                    val toast =
+                        Toast.makeText(applicationContext, "FUCK NIGGERS", Toast.LENGTH_SHORT)
                     toast.show()
                 }
             })
