@@ -4,6 +4,10 @@ import com.example.todoapp.data.storage.TaskStorage
 import com.example.todoapp.data.storage.database.room.TaskDao
 import com.example.todoapp.data.storage.database.room.entities.TaskRoom
 import com.example.todoapp.data.storage.model.Task
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 
 class TaskStorageDataBaseImp(private val taskDao: TaskDao) : TaskStorage {
 
@@ -25,5 +29,6 @@ class TaskStorageDataBaseImp(private val taskDao: TaskDao) : TaskStorage {
             result.add(Task(i.id!!,i.name,i.date,i.isCompleted))
         }
         return result
+
     }
 }

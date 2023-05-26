@@ -4,6 +4,9 @@ import com.example.todoapp.data.storage.TaskStorage
 import com.example.todoapp.data.storage.database.room.entities.TaskRoom
 import com.example.todoapp.data.storage.model.Task
 import com.example.todoapp.domain.repository.TaskRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class TaskRepositoryImpl(private val taskStorage: TaskStorage) : TaskRepository {
     override suspend fun getAllTasks(): List<com.example.todoapp.domain.model.Task> {
@@ -44,10 +47,11 @@ class TaskRepositoryImpl(private val taskStorage: TaskStorage) : TaskRepository 
             )
         }
         return result
+
     }
 
     fun mapToRoomTask(task: com.example.todoapp.domain.model.Task): TaskRoom {
-        return TaskRoom(task.id,task.name,task.date,task.isCompleted)
+        return TaskRoom(task.id, task.name, task.date, task.isCompleted)
     }
 
 }

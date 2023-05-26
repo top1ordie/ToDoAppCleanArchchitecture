@@ -1,8 +1,10 @@
 package com.example.todoapp.presentation.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,47 +23,42 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var viewModel: MainViewModel
+    private val mainViewModel by viewModel<MainViewModel>()
+    lateinit var recyclerView: RecyclerView
+    val adapter = RecyclerAdapter()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel = ViewModelProvider(this,MainViewModelFactory(applicationContext)).get(MainViewModel::class.java)
+
         val addButton = findViewById<FloatingActionButton>(R.id.add_button)
         addButton.setOnClickListener {
             val dialog = CreateTaskDialog()
-            dialog.show(supportFragmentManager,"Dialog")
+            dialog.show(supportFragmentManager, "Dialog")
         }
+        mainViewModel.someShit()
+        /*mainViewModel._list.observe(this, {
+            adapter.bindData(it)
+        })*/
+
+        mainViewModel._list.value?.let {
+            for (i in it) {
+                Log.d("TaskValuesFromVM" ,"id: ${i.id}")
+            }
+            adapter.bindData(it)
+
+        }
+        initRecycler()
+
 
     }
 
-    fun initRecycler(list: List<Task>) {
-        var mIth = ItemTouchHelper(
-            object : ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.LEFT
-            ) {
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: ViewHolder, target: ViewHolder
-                ): Boolean {
-                    val fromPos = viewHolder.adapterPosition
-                    val toPos = target.adapterPosition
-                    // move item in `fromPos` to `toPos` in adapter.
-                    return true // true if moved, false otherwise
-                }
-
-                override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
-                    val toast =
-                        Toast.makeText(applicationContext, "FUCK NIGGERS", Toast.LENGTH_SHORT)
-                    toast.show()
-                }
-            })
-        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-        val adapter = RecyclerAdapter()
-        adapter.bindData(list)
+    fun initRecycler() {
+        var mIth = ItemTouchHelper(SwipeCallBack(applicationContext))
+        recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         mIth.attachToRecyclerView(recyclerView)
