@@ -19,15 +19,14 @@ import com.example.todoapp.domain.repository.TaskRepository
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    val dao: TaskDao,
-    val taskStorage: TaskStorage,
-    val taskRepository: TaskRepository,
     val getAllTasks: GetAllTasks,
-    val removeTask: RemoveTask,
-    val saveTask: SaveTask
 ) : ViewModel() {
     val _list = MutableLiveData<List<Task>>()
-
+    init {
+        viewModelScope.launch {
+            _list.value = getAllTasks.execute()
+        }
+    }
     fun someShit() {
         viewModelScope.launch {
             _list.value = getAllTasks.execute()
